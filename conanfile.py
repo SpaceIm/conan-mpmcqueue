@@ -1,4 +1,5 @@
 from conans import ConanFile, tools
+from conans.errors import ConanInvalidConfiguration
 import os
 
 required_conan_version = ">=1.33.0"
@@ -21,6 +22,8 @@ class MpmcqueueConan(ConanFile):
     def validate(self):
         if self.settings.compiler.get_safe("cppstd"):
             tools.check_min_cppstd(self, 11)
+        if self.settings.compiler == "gcc" and tools.Version(self.settings.compiler.version) < "5":
+            raise ConanInvalidConfiguration("gcc < 5 not supported")
 
     def package_id(self):
         self.info.header_only()
